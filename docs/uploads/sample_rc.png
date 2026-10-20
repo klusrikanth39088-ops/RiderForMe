@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="380" viewBox="0 0 600 380">
+  <rect width="600" height="380" rx="16" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+  <rect width="600" height="55" rx="16" fill="#15803d"/>
+  <text x="300" y="36" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff" text-anchor="middle">CERTIFICATE OF REGISTRATION (FORM 23)</text>
+  <text x="30" y="95" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#15803d">REGISTRATION NO: KA-02-ZZ-1204</text>
+  <text x="30" y="130" font-family="Arial, sans-serif" font-size="14" fill="#334155">OWNER: ANIKET SHARMA</text>
+  <text x="30" y="160" font-family="Arial, sans-serif" font-size="14" fill="#334155">CLASS OF VEHICLE: TWO WHEELER (MOTOR CYCLE)</text>
+  <text x="30" y="190" font-family="Arial, sans-serif" font-size="14" fill="#334155">MAKER / MODEL: YAMAHA FZ-S FI (149 CC)</text>
+  <text x="30" y="220" font-family="Arial, sans-serif" font-size="14" fill="#334155">CHASSIS NO: ME1RG0710K108XXXX</text>
+  <text x="30" y="250" font-family="Arial, sans-serif" font-size="14" fill="#334155">FUEL TYPE: PETROL | BS-VI COMPLIANT</text>
+  <rect x="30" y="295" width="540" height="45" rx="6" fill="#dcfce7"/>
+  <text x="300" y="323" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#15803d" text-anchor="middle">COMMERCIAL FITNESS &amp; INSURANCE VALID UP TO 2028</text>
+</svg>

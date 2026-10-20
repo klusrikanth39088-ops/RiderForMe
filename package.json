@@ -1,0 +1,31 @@
+{
+  "name": "riderforme",
+  "version": "1.0.0",
+  "description": "Hyper-local on-demand bike-taxi, auto-hailing, and parcel logistics platform powered by 100% free open-source GIS",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  },
+  "keywords": [
+    "rapido-clone",
+    "bike-taxi",
+    "auto-hailing",
+    "openstreetmap",
+    "osrm",
+    "photon",
+    "nominatim",
+    "logistics"
+  ],
+  "author": "RiderForMe Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "isomorphic-git": "^1.44.3",
+    "multer": "^1.4.5-lts.1",
+    "socket.io": "^4.8.1",
+    "uuid": "^11.0.5"
+  }
+}

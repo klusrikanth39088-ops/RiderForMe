@@ -1,0 +1,180 @@
+{
+  "fares": {
+    "bike": {
+      "service": "bike",
+      "name": "Bike Taxi",
+      "icon": "🛵",
+      "baseFare": 25,
+      "baseKm": 2,
+      "perKm": 8,
+      "perMinute": 0.5,
+      "commissionRate": 10,
+      "surgeMultiplier": 1,
+      "description": "Fastest through traffic, solo rider"
+    },
+    "auto": {
+      "service": "auto",
+      "name": "Auto Rickshaw",
+      "icon": "🛺",
+      "baseFare": 40,
+      "baseKm": 2,
+      "perKm": 14,
+      "perMinute": 1,
+      "commissionRate": 10,
+      "surgeMultiplier": 1,
+      "description": "Comfortable 3-seater, open breeze"
+    },
+    "parcel": {
+      "service": "parcel",
+      "name": "Parcel Delivery",
+      "icon": "📦",
+      "baseFare": 30,
+      "baseKm": 2,
+      "perKm": 10,
+      "perMinute": 0.75,
+      "commissionRate": 12,
+      "surgeMultiplier": 1,
+      "description": "Door-to-door documents & parcels"
+    }
+  },
+  "drivers": [
+    {
+      "id": "drv-001",
+      "name": "Venkatesh Naik",
+      "phone": "+91 98765 43210",
+      "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150",
+      "serviceType": "bike",
+      "vehicleNumber": "AP-07-TA-4821",
+      "vehicleModel": "Hero Splendor Plus",
+      "rating": 4.88,
+      "totalRides": 1420,
+      "status": "approved",
+      "isOnline": true,
+      "location": {
+        "lat": 16.4785,
+        "lng": 79.421,
+        "heading": 45,
+        "speed": 24
+      },
+      "walletBalance": 2450.5,
+      "todayEarnings": 840,
+      "documents": {
+        "aadhaar": "/uploads/sample_aadhaar.png",
+        "drivingLicense": "/uploads/sample_dl.png",
+        "vehicleRc": "/uploads/sample_rc.png",
+        "uploadedAt": "2026-10-18T10:30:00Z"
+      }
+    },
+    {
+      "id": "drv-002",
+      "name": "Shiva Prasad",
+      "phone": "+91 98234 11223",
+      "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
+      "serviceType": "auto",
+      "vehicleNumber": "AP-07-UA-9932",
+      "vehicleModel": "Bajaj RE Compact 4S",
+      "rating": 4.92,
+      "totalRides": 2890,
+      "status": "approved",
+      "isOnline": true,
+      "location": {
+        "lat": 16.482,
+        "lng": 79.416,
+        "heading": 120,
+        "speed": 20
+      },
+      "walletBalance": 3120,
+      "todayEarnings": 1150,
+      "documents": {
+        "aadhaar": "/uploads/sample_aadhaar.png",
+        "drivingLicense": "/uploads/sample_dl.png",
+        "vehicleRc": "/uploads/sample_rc.png",
+        "uploadedAt": "2026-10-15T09:15:00Z"
+      }
+    },
+    {
+      "id": "drv-003",
+      "name": "Koti Reddy",
+      "phone": "+91 97112 88440",
+      "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
+      "serviceType": "bike",
+      "vehicleNumber": "AP-07-MK-7120",
+      "vehicleModel": "Honda Activa 6G",
+      "rating": 4.79,
+      "totalRides": 870,
+      "status": "approved",
+      "isOnline": true,
+      "location": {
+        "lat": 16.49,
+        "lng": 79.43,
+        "heading": 270,
+        "speed": 26
+      },
+      "walletBalance": 1680,
+      "todayEarnings": 620,
+      "documents": {
+        "aadhaar": "/uploads/sample_aadhaar.png",
+        "drivingLicense": "/uploads/sample_dl.png",
+        "vehicleRc": "/uploads/sample_rc.png",
+        "uploadedAt": "2026-10-17T14:20:00Z"
+      }
+    },
+    {
+      "id": "drv-004",
+      "name": "Ramesh Babu",
+      "phone": "+91 99001 55667",
+      "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150",
+      "serviceType": "parcel",
+      "vehicleNumber": "AP-07-TR-5544",
+      "vehicleModel": "TVS Jupiter / Cargo Box",
+      "rating": 4.95,
+      "totalRides": 630,
+      "status": "approved",
+      "isOnline": true,
+      "location": {
+        "lat": 16.485,
+        "lng": 79.405,
+        "heading": 90,
+        "speed": 18
+      },
+      "walletBalance": 1980,
+      "todayEarnings": 930,
+      "documents": {
+        "aadhaar": "/uploads/sample_aadhaar.png",
+        "drivingLicense": "/uploads/sample_dl.png",
+        "vehicleRc": "/uploads/sample_rc.png",
+        "uploadedAt": "2026-10-16T11:45:00Z"
+      }
+    },
+    {
+      "id": "drv-005",
+      "name": "Baji Shaik",
+      "phone": "+91 91234 56789",
+      "avatar": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150",
+      "serviceType": "bike",
+      "vehicleNumber": "AP-07-ZZ-1204",
+      "vehicleModel": "Yamaha FZ-S",
+      "rating": 5,
+      "totalRides": 0,
+      "status": "pending",
+      "isOnline": false,
+      "location": {
+        "lat": 16.465,
+        "lng": 79.428,
+        "heading": 0,
+        "speed": 0
+      },
+      "walletBalance": 500,
+      "todayEarnings": 0,
+      "documents": {
+        "aadhaar": "/uploads/sample_aadhaar.png",
+        "drivingLicense": "/uploads/sample_dl.png",
+        "vehicleRc": "/uploads/sample_rc.png",
+        "uploadedAt": "2026-10-20T08:00:00Z"
+      }
+    }
+  ],
+  "rides": [],
+  "sosAlerts": [],
+  "walletLedgers": {}
+}

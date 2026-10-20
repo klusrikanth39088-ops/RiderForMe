@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RiderForMe | Customer App</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-frame">
+    <!-- Top Status Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-logo">⚡</div>
+        <div class="brand-text">
+          <span class="brand-name">RiderForMe</span>
+          <span class="brand-tag">Open GIS Mobility</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="sosBtn" class="sos-btn" title="Emergency SOS Panic Button">
+          <span class="sos-icon">🚨</span>
+          <span class="sos-label">SOS</span>
+        </button>
+        <div class="user-pill" id="userPill">
+          <span class="user-avatar">👤</span>
+          <span class="user-name" id="userNameLabel">Priya S.</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Map Container -->
+    <div class="map-viewport">
+      <div id="customerMap"></div>
+
+      <!-- Recenter / Locate Button -->
+      <button id="recenterBtn" class="recenter-btn" title="Recenter to My Location">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="12" cy="12" r="7"/>
+          <polyline points="12 1 12 5"/>
+          <polyline points="12 19 12 23"/>
+          <polyline points="1 12 5 12"/>
+          <polyline points="19 12 23 12"/>
+        </svg>
+      </button>
+
+      <!-- Live Fare Badge overlay on top of map -->
+      <div class="realtime-fare-pill" id="fareSyncBanner">
+        <span class="pulse-dot"></span>
+        <span id="fareSyncText">100% Free OpenStreetMap & OSRM Engine Active</span>
+      </div>
+    </div>
+
+    <!-- Booking Sheet / Bottom Drawers -->
+    <main class="bottom-sheet" id="bottomSheet">
+      <!-- STATE 1: SEARCH & SERVICE SELECTION -->
+      <div id="bookingState" class="sheet-state active">
+        <!-- Service Type Selector -->
+        <div class="service-selector">
+          <button class="service-tab active" data-service="bike">
+            <span class="tab-icon">🛵</span>
+            <div class="tab-info">
+              <span class="tab-title">Bike Taxi</span>
+              <span class="tab-fare" id="bikeFareBadge">₹25 base</span>
+            </div>
+            <span class="tab-badge">Fastest</span>
+          </button>
+          <button class="service-tab" data-service="auto">
+            <span class="tab-icon">🛺</span>
+            <div class="tab-info">
+              <span class="tab-title">Auto Ride</span>
+              <span class="tab-fare" id="autoFareBadge">₹40 base</span>
+            </div>
+          </button>
+          <button class="service-tab" data-service="parcel">
+            <span class="tab-icon">📦</span>
+            <div class="tab-info">
+              <span class="tab-title">Parcel</span>
+              <span class="tab-fare" id="parcelFareBadge">₹30 base</span>
+            </div>
+          </button>
+        </div>
+
+        <!-- Address Inputs -->
+        <div class="address-card">
+          <!-- Pickup -->
+          <div class="input-row pickup-row">
+            <div class="point-marker green-point"></div>
+            <div class="input-wrapper">
+              <label>PICKUP LOCATION</label>
+              <input type="text" id="pickupInput" value="Macherla RTC Bus Stand, AP - 522426" placeholder="Choose pickup point">
+            </div>
+          </div>
+
+          <div class="route-line-connector"></div>
+
+          <!-- Dropoff -->
+          <div class="input-row dropoff-row">
+            <div class="point-marker red-point"></div>
+            <div class="input-wrapper">
+              <label>WHERE TO? (50KM OFFLINE COVERAGE)</label>
+              <input type="text" id="dropoffInput" placeholder="Search destination (OSM Offline & Photon)..." autocomplete="off">
+              <button id="clearDropoffBtn" class="clear-btn" style="display: none;">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Autocomplete Suggestions Dropdown -->
+        <div id="suggestionsList" class="suggestions-list" style="display: none;"></div>
+
+        <!-- Quick Shortcut Landmark Chips (Within 50km Radius of 522426) -->
+        <div class="quick-chips" id="quickChips">
+          <span class="chips-label">50km Hubs:</span>
+          <button class="chip-btn" data-place="Ethipothala Waterfalls" data-lat="16.5312" data-lng="79.4285">Ethipothala (11km)</button>
+          <button class="chip-btn" data-place="Nagarjuna Sagar Dam View Point" data-lat="16.5744" data-lng="79.3146">Nagarjuna Sagar (24km)</button>
+          <button class="chip-btn" data-place="Rentachintala Town Center" data-lat="16.5510" data-lng="79.5440">Rentachintala (18km)</button>
+          <button class="chip-btn" data-place="Gurazala Clock Tower" data-lat="16.5820" data-lng="79.5710">Gurazala (28km)</button>
+          <button class="chip-btn" data-place="Piduguralla White Marble Market" data-lat="16.4830" data-lng="79.8890">Piduguralla (48km)</button>
+          <button class="chip-btn" data-place="Durgi Main Road" data-lat="16.4150" data-lng="79.5080">Durgi (16km)</button>
+        </div>
+
+        <!-- Fare Calculation & Estimate Card (Visible when route calculated) -->
+        <div id="farePreviewCard" class="fare-preview-card" style="display: none;">
+          <div class="route-metrics">
+            <div class="metric">
+              <span class="metric-label">Road Distance</span>
+              <span class="metric-val" id="metricDistance">0.0 km</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric">
+              <span class="metric-label">Est. Time (ETA)</span>
+              <span class="metric-val" id="metricDuration">0 min</span>
+            </div>
+            <div class="metric-divider"></div>
+            <div class="metric">
+              <span class="metric-label">Estimated Fare</span>
+              <span class="metric-val fare-highlight" id="metricFare">₹0</span>
+            </div>
+          </div>
+
+          <!-- Price Breakdown Details Toggle -->
+          <details class="fare-breakdown-details">
+            <summary>View Dynamic Fare Breakdown</summary>
+            <div class="breakdown-grid" id="breakdownGrid">
+              <!-- populated by JS -->
+            </div>
+          </details>
+
+          <!-- Payment Method Selector -->
+          <div class="payment-method-selector">
+            <span class="payment-label">Payment:</span>
+            <div class="payment-options">
+              <label class="pay-option">
+                <input type="radio" name="payMethod" value="cod" checked>
+                <span>💵 Cash on Delivery</span>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payMethod" value="wallet">
+                <span>💳 Wallet (₹500.00)</span>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payMethod" value="upi">
+                <span>📱 Direct UPI</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Book Button -->
+          <button id="bookRideBtn" class="primary-action-btn">
+            <span class="btn-text">Confirm &amp; Book Ride</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STATE 2: SEARCHING / MATCHING WITH CAPTAIN -->
+      <div id="searchingState" class="sheet-state" style="display: none;">
+        <div class="searching-box">
+          <div class="radar-pulse">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="radar-icon" id="searchVehicleIcon">🛵</div>
+          </div>
+          <h3>Connecting with Nearest Captain...</h3>
+          <p>Broadcasting to verified open-source fleet within 3 km</p>
+          <div class="search-progress-bar">
+            <div class="progress-bar-fill"></div>
+          </div>
+          <button id="cancelSearchBtn" class="secondary-btn">Cancel Request</button>
+        </div>
+      </div>
+
+      <!-- STATE 3: RIDE IN PROGRESS / TRACKING DRIVER -->
+      <div id="trackingState" class="sheet-state" style="display: none;">
+        <!-- Status Header -->
+        <div class="trip-header">
+          <div class="trip-badge" id="tripStatusBadge">Captain Assigned</div>
+          <div class="trip-otp-badge">
+            <span class="otp-label">START OTP</span>
+            <span class="otp-code" id="rideOtpCode">----</span>
+          </div>
+        </div>
+
+        <!-- Driver Card -->
+        <div class="driver-card">
+          <img id="driverAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Captain" class="driver-photo">
+          <div class="driver-info">
+            <div class="driver-name-row">
+              <h4 id="driverName">Rajesh Kumar</h4>
+              <span class="driver-rating">★ 4.88</span>
+            </div>
+            <div class="driver-subtext" id="driverVehicleModel">Hero Splendor Plus</div>
+            <div class="driver-plate" id="driverPlate">KA-05-EJ-4821</div>
+          </div>
+          <div class="driver-actions">
+            <button class="call-btn" title="Call Driver" onclick="alert('Calling Captain at +91 98765 43210')">📞</button>
+            <button class="chat-btn" title="Chat" onclick="alert('Driver message: I have arrived at your pickup gate!')">💬</button>
+          </div>
+        </div>
+
+        <!-- Live Distance to Pickup/Drop -->
+        <div class="trip-tracker-hud">
+          <div class="hud-item">
+            <span class="hud-label">Captain ETA</span>
+            <span class="hud-val" id="hudEta">3 mins</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Remaining Distance</span>
+            <span class="hud-val" id="hudDistance">1.2 km</span>
+          </div>
+          <div class="hud-item">
+            <span class="hud-label">Trip Total</span>
+            <span class="hud-val" id="hudFare">₹65</span>
+          </div>
+        </div>
+
+        <!-- Emergency & Cancel Actions -->
+        <div class="tracking-actions">
+          <button id="tripSosBtn" class="sos-action-btn">🚨 Emergency SOS</button>
+          <button id="cancelTripBtn" class="cancel-trip-btn">Cancel Ride</button>
+        </div>
+      </div>
+
+      <!-- STATE 4: TRIP COMPLETED & RECEIPT -->
+      <div id="completedState" class="sheet-state" style="display: none;">
+        <div class="completed-box">
+          <div class="success-checkmark">✓</div>
+          <h3>Trip Completed!</h3>
+          <p class="completed-msg">You have arrived safely at your destination.</p>
+
+          <div class="receipt-card">
+            <div class="receipt-row">
+              <span>Total Distance Traveled</span>
+              <strong id="receiptDistance">4.8 km</strong>
+            </div>
+            <div class="receipt-row">
+              <span>Total Trip Duration</span>
+              <strong id="receiptDuration">16 mins</strong>
+            </div>
+            <div class="receipt-row">
+              <span>Payment Mode</span>
+              <strong id="receiptPayment">Cash on Delivery</strong>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-row total-row">
+              <span>Amount Paid</span>
+              <strong class="receipt-amount" id="receiptAmount">₹65.00</strong>
+            </div>
+          </div>
+
+          <!-- Star Rating -->
+          <div class="rating-section">
+            <p>How was your ride with Captain?</p>
+            <div class="stars">
+              <span class="star active">★</span>
+              <span class="star active">★</span>
+              <span class="star active">★</span>
+              <span class="star active">★</span>
+              <span class="star active">★</span>
+            </div>
+          </div>
+
+          <button id="bookAnotherBtn" class="primary-action-btn">Book Another Ride</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- OTP & Login Modal -->
+    <div id="authModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <h3>Login with Mobile Number</h3>
+        <p>Zero password hassle. Enter your phone number to receive a free SMS OTP.</p>
+        <div class="form-group">
+          <label>Mobile Number</label>
+          <div class="phone-input-wrap">
+            <span class="country-prefix">+91</span>
+            <input type="tel" id="loginPhoneInput" value="9876500123" maxlength="10">
+          </div>
+        </div>
+        <div id="otpInputGroup" style="display: none;" class="form-group">
+          <label>Enter 4-Digit OTP</label>
+          <div class="otp-hint-badge" id="otpHint">Simulated OTP: <strong>5821</strong></div>
+          <input type="text" id="otpCodeInput" maxlength="4" placeholder="5821">
+        </div>
+        <button id="sendOtpBtn" class="primary-action-btn">Get Verification Code</button>
+        <button id="verifyOtpBtn" class="primary-action-btn" style="display: none;">Verify &amp; Enter</button>
+      </div>
+    </div>
+
+    <!-- SOS Confirmation Modal -->
+    <div id="sosModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card sos-card">
+        <div class="sos-modal-header">
+          <span class="sos-alarm-icon">🚨</span>
+          <h3>EMERGENCY SOS DISPATCH</h3>
+        </div>
+        <p>This will instantly broadcast your live GPS coordinates to the Central Police &amp; Platform Emergency Operations Center.</p>
+        <div class="sos-coords-preview" id="sosCoordsPreview">Latitude: 12.9352, Longitude: 77.6245</div>
+        <div class="sos-modal-actions">
+          <button id="confirmSosBtn" class="sos-confirm-btn">DISPATCH SOS ALERT NOW</button>
+          <button id="cancelSosBtn" class="secondary-btn">Cancel (False Alarm)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Socket.IO Client -->
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

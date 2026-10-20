@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RiderForMe | Open-Source Hyper-Local Mobility Studio</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="hub.css">
+</head>
+<body>
+  <!-- Top Global Command Bar -->
+  <header class="hub-header">
+    <div class="brand-group">
+      <div class="hub-logo">⚡</div>
+      <div>
+        <h1 class="hub-title">RiderForMe <span class="tag">Open GIS Engine</span></h1>
+        <p class="hub-subtitle">Hyper-Local Bike Taxi, Auto-Hailing &amp; Logistics Platform • 100% Free OpenStreetMap &amp; OSRM</p>
+      </div>
+    </div>
+
+    <!-- Quick Demo Triggers -->
+    <div class="hub-actions">
+      <button id="triggerTestRideBtn" class="hub-btn primary">
+        <span>🛵</span> Test Ride Dispatch
+      </button>
+      <button id="triggerTestSosBtn" class="hub-btn danger">
+        <span>🚨</span> Test SOS Alarm
+      </button>
+      <button id="toggleSurgeBtn" class="hub-btn gold">
+        <span>⚡</span> Toggle 1.25x Peak Surge
+      </button>
+
+      <!-- Viewport Mode Selector -->
+      <div class="view-mode-toggle">
+        <button class="mode-btn active" data-mode="trio">Trio Studio</button>
+        <button class="mode-btn" data-mode="customer">Customer Only</button>
+        <button class="mode-btn" data-mode="driver">Captain Only</button>
+        <button class="mode-btn" data-mode="admin">Admin Only</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Multi-Device Simulation Viewport -->
+  <main class="studio-viewport mode-trio" id="studioViewport">
+    <!-- PANEL 1: CUSTOMER APP -->
+    <div class="device-panel panel-customer" id="panelCustomer">
+      <div class="device-toolbar">
+        <div class="toolbar-title">
+          <span class="dot green"></span>
+          <strong>Customer Mobile App</strong>
+          <span class="device-tag">Android / iOS</span>
+        </div>
+        <div class="toolbar-links">
+          <a href="./customer/" target="_blank" class="launch-link" title="Open in new window">Launch Tab ↗</a>
+        </div>
+      </div>
+      <div class="phone-wrapper">
+        <iframe src="./customer/" id="customerFrame" class="device-iframe" title="Customer App"></iframe>
+      </div>
+    </div>
+
+    <!-- PANEL 2: DRIVER APP -->
+    <div class="device-panel panel-driver" id="panelDriver">
+      <div class="device-toolbar">
+        <div class="toolbar-title">
+          <span class="dot amber"></span>
+          <strong>Captain Partner App</strong>
+          <span class="device-tag">Android App</span>
+        </div>
+        <div class="toolbar-links">
+          <a href="./driver/" target="_blank" class="launch-link" title="Open in new window">Launch Tab ↗</a>
+        </div>
+      </div>
+      <div class="phone-wrapper">
+        <iframe src="./driver/" id="driverFrame" class="device-iframe" title="Driver App"></iframe>
+      </div>
+    </div>
+
+    <!-- PANEL 3: ADMIN DASHBOARD -->
+    <div class="device-panel panel-admin" id="panelAdmin">
+      <div class="device-toolbar">
+        <div class="toolbar-title">
+          <span class="dot blue"></span>
+          <strong>Central Admin Dashboard</strong>
+          <span class="device-tag">Desktop Web Console</span>
+        </div>
+        <div class="toolbar-links">
+          <a href="./admin/" target="_blank" class="launch-link" title="Open in new window">Launch Tab ↗</a>
+        </div>
+      </div>
+      <div class="desktop-wrapper">
+        <iframe src="./admin/" id="adminFrame" class="device-iframe" title="Admin Dashboard"></iframe>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Quick Guide -->
+  <footer class="hub-footer">
+    <div class="guide-item">
+      <strong>1. Free Open GIS Stack:</strong> Map tiles from OpenStreetMap &amp; Carto, Geocoding via Komoot Photon, Road routing &amp; distance via OSRM.
+    </div>
+    <div class="guide-item">
+      <strong>2. Live Interaction:</strong> Type a drop-off location in the Customer App, book a ride, watch the 15s chime overlay appear on the Captain App, and track the live dispatch on the Admin map.
+    </div>
+    <div class="guide-item">
+      <strong>3. Dynamic Fare Engine:</strong> Adjust base fare or per-km rates in the Admin Dashboard, click Save, and watch Customer fares immediately update!
+    </div>
+  </footer>
+
+  <script>
+    // Viewport Mode Switcher
+    const modeBtns = document.querySelectorAll('.mode-btn');
+    const viewport = document.getElementById('studioViewport');
+
+    modeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        modeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.getAttribute('data-mode');
+        viewport.className = `studio-viewport mode-${mode}`;
+      });
+    });
+
+    // Quick Test Ride Dispatch Trigger
+    document.getElementById('triggerTestRideBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/api/rides/create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: { name: 'Priya Sharma', phone: '+91 98765 00123' },
+            pickup: { address: 'Koramangala 5th Block, Bengaluru', lat: 12.9352, lng: 77.6245 },
+            dropoff: { address: 'Indiranagar 100ft Road, Bengaluru', lat: 12.9716, lng: 77.6412 },
+            serviceType: 'bike',
+            paymentMethod: 'upi'
+          })
+        });
+        const json = await res.json();
+        alert('🚀 Test Ride Created!\nCheck the Captain App for the 15-second animated countdown and Admin Map for live telemetry.');
+      } catch (e) {
+        alert('Failed to trigger test ride');
+      }
+    });
+
+    // Quick SOS Test Trigger
+    document.getElementById('triggerTestSosBtn').addEventListener('click', async () => {
+      try {
+        await fetch('/api/rides/mock-ride/sos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            callerType: 'customer',
+            callerName: 'Priya Sharma (Emergency Test)',
+            callerPhone: '+91 98765 00123',
+            lat: 12.9352,
+            lng: 77.6245
+          })
+        });
+        alert('🚨 Emergency SOS Triggered!\nCheck the Admin Dashboard for the high-priority alarm siren & dispatch card.');
+      } catch (e) {
+        alert('Failed to trigger SOS');
+      }
+    });
+
+    // Quick Surge Multiplier Toggle
+    let surgeOn = false;
+    document.getElementById('toggleSurgeBtn').addEventListener('click', async () => {
+      surgeOn = !surgeOn;
+      const surgeMultiplier = surgeOn ? 1.25 : 1.0;
+      try {
+        const faresRes = await fetch('/api/fares');
+        const faresJson = await faresRes.json();
+        const current = faresJson.data;
+
+        current.bike.surgeMultiplier = surgeMultiplier;
+        current.auto.surgeMultiplier = surgeMultiplier;
+        current.parcel.surgeMultiplier = surgeMultiplier;
+
+        await fetch('/api/fares/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fares: current })
+        });
+
+        alert(`⚡ Surge Multiplier set to ${surgeMultiplier}x!\nCustomer App fares immediately updated.`);
+      } catch (e) {
+        alert('Failed to update surge');
+      }
+    });
+  </script>
+</body>
+</html>

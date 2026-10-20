@@ -1,0 +1,46 @@
+version: '3.8'
+
+# RiderForMe 100% Self-Hosted Open-Source Infrastructure Stack
+# Run: docker compose up -d
+
+services:
+  # 1. RiderForMe Core Backend Server
+  backend:
+    build: .
+    container_name: riderforme-backend
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - NODE_ENV=production
+      - OSRM_URL=http://osrm-backend:5000
+      - NOMINATIM_URL=http://nominatim:8080
+    volumes:
+      - ./server/data:/app/server/data
+      - ./server/uploads:/app/server/uploads
+    depends_on:
+      - osrm-backend
+
+  # 2. Open Source Routing Machine (OSRM) Engine
+  # Pre-loads OpenStreetMap road network for sub-10ms route calculations
+  osrm-backend:
+    image: osrm/osrm-backend:latest
+    container_name: riderforme-osrm
+    restart: always
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./osrm-data:/data
+    command: osrm-routed --algorithm mld /data/india-latest.osrm
+
+  # 3. Nominatim / Photon Self-Hosted Geocoding Server
+  # Reverse geocoding and address autocomplete from local OpenStreetMap database
+  photon-geocoder:
+    image: komoot/photon:latest
+    container_name: riderforme-photon
+    restart: always
+    ports:
+      - "2322:2322"
+    volumes:
+      - ./photon-data:/photon/photon_data

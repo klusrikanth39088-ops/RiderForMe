@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RiderForMe | Captain Partner App</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="mobile-frame">
+    <!-- Driver Persistent Top Bar -->
+    <header class="driver-header">
+      <div class="driver-profile-mini">
+        <img id="captainAvatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar" class="avatar-img">
+        <div class="profile-details">
+          <div class="name-rating">
+            <h3 id="captainName">Rajesh Kumar</h3>
+            <span class="rating-badge">★ 4.88</span>
+          </div>
+          <span class="plate-number" id="captainPlate">KA-05-EJ-4821 • Splendor</span>
+        </div>
+      </div>
+
+      <!-- Persistent Go Online / Go Offline Toggle Switch -->
+      <div class="status-toggle-wrapper">
+        <label class="toggle-switch">
+          <input type="checkbox" id="onlineToggle" checked>
+          <span class="slider round"></span>
+        </label>
+        <span class="toggle-status-label" id="statusLabel">ONLINE</span>
+      </div>
+    </header>
+
+    <!-- Verification Pending Warning Banner -->
+    <div id="kycBanner" class="kyc-warning-banner" style="display: none;">
+      <div class="banner-content">
+        <span class="warning-icon">⏳</span>
+        <div class="banner-text">
+          <strong>Account Pending Verification</strong>
+          <span>Admin approval required before taking rides.</span>
+        </div>
+      </div>
+      <button id="viewKycBtn" class="kyc-link-btn">View KYC</button>
+    </div>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="driver-main-viewport">
+      <!-- 1. MAP & RIDE VIEW (Active Tab) -->
+      <section id="mapTab" class="tab-view active">
+        <div id="driverMap" class="driver-map"></div>
+
+        <!-- Offline Overlay Message -->
+        <div id="offlineOverlay" class="offline-overlay" style="display: none;">
+          <div class="offline-card">
+            <span class="offline-icon">😴</span>
+            <h3>You are Currently Offline</h3>
+            <p>Switch the toggle to "ONLINE" at the top to start receiving ride requests and earning.</p>
+            <button id="goOnlineQuickBtn" class="go-online-btn">Go Online Now</button>
+          </div>
+        </div>
+
+        <!-- In-Ride Navigation HUD (Turn-by-turn guidance) -->
+        <div id="navigationHud" class="navigation-hud" style="display: none;">
+          <div class="maneuver-bar">
+            <div class="maneuver-icon" id="turnIcon">↰</div>
+            <div class="maneuver-instruction">
+              <span class="instruction-text" id="maneuverText">Turn left onto 100 Feet Rd</span>
+              <span class="instruction-distance" id="maneuverDist">In 250 meters</span>
+            </div>
+            <!-- External Google Maps Launch Intent -->
+            <button id="googleMapsIntentBtn" class="gmaps-intent-btn" title="Open Turn-by-Turn in Native Google Maps App">
+              <span class="gmaps-icon">🗺️</span>
+              <span>Google Maps</span>
+            </button>
+          </div>
+
+          <!-- Trip In-Flight Actions -->
+          <div class="in-flight-card">
+            <div class="customer-info-row">
+              <div class="cust-details">
+                <strong id="tripCustomerName">Priya Sharma</strong>
+                <span id="tripServiceBadge" class="service-pill">🛵 Bike Taxi</span>
+              </div>
+              <div class="trip-dest-badge" id="tripDestinationText">Drop: Indiranagar</div>
+            </div>
+
+            <!-- In-Ride Progression Buttons -->
+            <div class="progression-actions">
+              <button id="arrivedBtn" class="action-step-btn">I Have Arrived at Pickup</button>
+              <button id="startTripBtn" class="action-step-btn start-btn" style="display: none;">Verify OTP &amp; Start Trip</button>
+              <button id="completeTripBtn" class="action-step-btn complete-btn" style="display: none;">Complete Trip &amp; Settle</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. WALLET & EARNINGS TAB -->
+      <section id="walletTab" class="tab-view" style="display: none;">
+        <div class="wallet-scroll-container">
+          <!-- Total Balance Card -->
+          <div class="wallet-hero-card">
+            <span class="hero-label">In-App Wallet Balance</span>
+            <h1 class="hero-balance" id="walletBalance">₹2,450.50</h1>
+            <div class="hero-actions">
+              <button id="payoutModalBtn" class="payout-action-btn">⚡ Instant Payout Settlement</button>
+            </div>
+          </div>
+
+          <!-- Today's Earnings Metrics -->
+          <div class="earnings-grid">
+            <div class="earn-card">
+              <span class="earn-title">Today's Net</span>
+              <span class="earn-val" id="todayEarnings">₹840.00</span>
+            </div>
+            <div class="earn-card">
+              <span class="earn-title">Total Trips</span>
+              <span class="earn-val" id="totalRides">1,420</span>
+            </div>
+            <div class="earn-card">
+              <span class="earn-title">Commission Cut</span>
+              <span class="earn-val text-amber">10%</span>
+            </div>
+          </div>
+
+          <!-- Commission Ledger Breakdown -->
+          <div class="ledger-section">
+            <h3>Financial Ledger &amp; Trips Breakdown</h3>
+            <p class="ledger-subtitle">Showing transparent ride earnings after platform deductions</p>
+            <div class="ledger-list" id="ledgerList">
+              <!-- populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. PROFILE & KYC DOCUMENTS TAB -->
+      <section id="kycTab" class="tab-view" style="display: none;">
+        <div class="kyc-scroll-container">
+          <div class="kyc-header">
+            <h3>Captain KYC Onboarding Portal</h3>
+            <div class="kyc-status-pill" id="kycStatusBadge">APPROVED</div>
+          </div>
+          <p class="kyc-desc">Upload clear photos of government documents. Approvals are reviewed by Central Admin.</p>
+
+          <!-- Uploaded Documents Preview -->
+          <div class="document-item">
+            <div class="doc-header">
+              <span>🪪 Aadhaar Card (Front/Back)</span>
+              <span class="doc-verified-check">✓ Uploaded</span>
+            </div>
+            <div class="doc-preview-box">
+              <img id="docAadhaarImg" src="/uploads/sample_aadhaar.png" alt="Aadhaar Document">
+            </div>
+          </div>
+
+          <div class="document-item">
+            <div class="doc-header">
+              <span>🚗 Driving License (DL)</span>
+              <span class="doc-verified-check">✓ Uploaded</span>
+            </div>
+            <div class="doc-preview-box">
+              <img id="docDlImg" src="/uploads/sample_dl.png" alt="Driving License">
+            </div>
+          </div>
+
+          <div class="document-item">
+            <div class="doc-header">
+              <span>📋 Vehicle RC (Registration)</span>
+              <span class="doc-verified-check">✓ Uploaded</span>
+            </div>
+            <div class="doc-preview-box">
+              <img id="docRcImg" src="/uploads/sample_rc.png" alt="Vehicle RC">
+            </div>
+          </div>
+
+          <!-- Switch Captain Profile (For Demo) -->
+          <div class="demo-switch-box">
+            <h4>Quick Switch Captain Account:</h4>
+            <div class="captain-chips">
+              <button class="cap-chip active" data-id="drv-001">Venkatesh (Approved - Bike)</button>
+              <button class="cap-chip" data-id="drv-002">Shiva (Approved - Auto)</button>
+              <button class="cap-chip" data-id="drv-005">Baji (Pending KYC)</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="driver-bottom-nav">
+      <button class="nav-btn active" data-tab="mapTab">
+        <span class="nav-icon">🧭</span>
+        <span class="nav-text">Rides</span>
+      </button>
+      <button class="nav-btn" data-tab="walletTab">
+        <span class="nav-icon">💰</span>
+        <span class="nav-text">Wallet</span>
+      </button>
+      <button class="nav-btn" data-tab="kycTab">
+        <span class="nav-icon">📄</span>
+        <span class="nav-text">KYC Portal</span>
+      </button>
+    </nav>
+
+    <!-- 15-SECOND BOOKING REQUEST OVERLAY BANNER -->
+    <div id="bookingOverlay" class="booking-request-overlay" style="display: none;">
+      <div class="request-card">
+        <!-- Circular 15s Countdown Timer -->
+        <div class="timer-container">
+          <svg class="timer-svg" viewBox="0 0 100 100">
+            <circle class="timer-bg" cx="50" cy="50" r="44"></circle>
+            <circle class="timer-progress" id="timerProgressCircle" cx="50" cy="50" r="44"></circle>
+          </svg>
+          <span class="timer-seconds" id="timerSecondsText">15s</span>
+        </div>
+
+        <!-- Request Details -->
+        <div class="request-header">
+          <div class="service-type-badge" id="reqServiceBadge">🛵 Bike Taxi</div>
+          <h2 class="expected-earnings" id="reqEarnings">Earn ₹58.00</h2>
+          <span class="earnings-subtext">Net after 10% platform commission</span>
+        </div>
+
+        <div class="request-route-info">
+          <div class="route-item">
+            <span class="dot green-dot"></span>
+            <div>
+              <strong id="reqPickupDistance">1.2 km away (4 mins)</strong>
+              <p id="reqPickupAddress">Koramangala 5th Block</p>
+            </div>
+          </div>
+          <div class="route-item">
+            <span class="dot red-dot"></span>
+            <div>
+              <strong>Drop-off Location</strong>
+              <p id="reqDropoffAddress">Indiranagar 100ft Road</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="request-actions">
+          <button id="declineRideBtn" class="decline-btn">Decline</button>
+          <button id="acceptRideBtn" class="accept-btn">ACCEPT RIDE</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTP Verification Modal for Starting Trip -->
+    <div id="otpVerifyModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <h3>Verify Customer Ride OTP</h3>
+        <p>Ask customer for their 4-digit start PIN before starting trip.</p>
+        <div class="form-group">
+          <input type="text" id="captainOtpInput" maxlength="4" placeholder="Enter 4-digit OTP" class="otp-input-field">
+        </div>
+        <div class="modal-actions">
+          <button id="confirmOtpBtn" class="primary-action-btn">Verify &amp; Start Trip</button>
+          <button id="cancelOtpBtn" class="secondary-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payout Settlement Modal -->
+    <div id="payoutModal" class="modal-overlay" style="display: none;">
+      <div class="modal-card">
+        <h3>Instant Payout Settlement</h3>
+        <p>Withdraw your earnings immediately to your Bank / UPI ID.</p>
+        <div class="form-group">
+          <label>Settlement Amount (₹)</label>
+          <input type="number" id="payoutAmountInput" value="1000" class="modal-input">
+        </div>
+        <div class="form-group">
+          <label>Your UPI ID (VPA)</label>
+          <input type="text" id="payoutUpiInput" value="captain@okhdfcbank" class="modal-input">
+        </div>
+        <button id="confirmPayoutBtn" class="primary-action-btn">Request Instant Transfer</button>
+        <button id="closePayoutBtn" class="secondary-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Socket.IO Client -->
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
