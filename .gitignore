@@ -8,7 +8,17 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Temporary archives
+# Temporary archives and builds
 *.zip
 *.tar
 *.log
+classes.dex
+AndroidManifest.xml
+scratch/
+scratch_apk/
+scratch_build_*/
+rider_base.apk
+riderforme.keystore
+android/
+dist-apk/
+*.apk

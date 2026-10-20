@@ -20,6 +20,8 @@
   "author": "RiderForMe Team",
   "license": "MIT",
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "express": "^4.21.2",
